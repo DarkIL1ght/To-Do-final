@@ -12,10 +12,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import todo.service.implement.TaskServiceImplement;
 
 @Service
 @RequiredArgsConstructor
-public class TaskService {
+public class TaskService implements TaskServiceImplement {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
@@ -60,33 +61,33 @@ public class TaskService {
 
         return task;
     }
-
+    @Override
     public List<DtoTask> getAllTasks() {
         return taskRepository.findAll()
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
-
+    @Override
     public DtoTask getTaskById(Long id) {
         return taskRepository.findById(id)
                 .map(this::toDto)
                 .orElse(null);
     }
-
+    @Override
     public List<DtoTask> getTasksByUser(Long userId) {
         return taskRepository.findByUserId(userId)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
-
+    @Override
     public DtoTask createTask(DtoTask dtoTask) {
         Task task = toEntity(dtoTask);
         Task savedTask = taskRepository.save(task);
         return toDto(savedTask);
     }
-
+    @Override
     public DtoTask updateTask(Long id, DtoTask dtoTask) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
@@ -99,7 +100,7 @@ public class TaskService {
         Task updatedTask = taskRepository.save(task);
         return toDto(updatedTask);
     }
-
+    @Override
     public void deleteTask(Long id) {
         if (!taskRepository.existsById(id)) {
             throw new RuntimeException("Task not found");
